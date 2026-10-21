@@ -11,7 +11,7 @@ checklist. Format di Bagian 6 bisa langsung di-paste ke Trello.
 
 ## 1. Dasar pembagian
 
-Dari P12, setelah capacity shock 20 → 14 poin, item yang masuk sprint adalah:
+Dari P12, setelah capacity shock 20 -> 14 poin, item yang masuk sprint adalah:
 
 | User Story | Poin | Status |
 |---|---|---|
@@ -48,18 +48,18 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-01 · Form lapor kehilangan
 - **Owner:** Adzril Adzim Hendrynov · **Reviewer:** Arsalla · **Poin:** 2
-- **Story:** US-01 → R1 → N1, N2 → F2, F3, C5
+- **Story:** US-01 -> R1 -> N1, N2 -> F2, F3, C5
 - **File:** `src/pages/student/LaporKehilangan.jsx`
 - **Branch:** `feat/st-01-lapor-kehilangan`
 - **Checklist (AC):**
-  - [ ] AC1.1 — jenis + minimal satu ciri → tersimpan dengan ID dan status "Dilaporkan"
+  - [ ] AC1.1 — jenis + minimal satu ciri -> tersimpan dengan ID dan status "Dilaporkan"
   - [ ] AC1.2 — rentang jam & area umum diterima, waktu/lokasi persis tidak pernah diminta
   - [ ] AC1.3 — tanpa jenis barang, laporan ditolak dan field wajib ditandai
 - **Dependency:** tidak ada. Jadi sumber data untuk ST-07 dan ST-08.
 
 ### ST-02 · Form catat barang temuan
 - **Owner:** Arsalla Jumanuar Sintaka · **Reviewer:** Ferdilla · **Poin:** 2
-- **Story:** US-03 → R2 → N5 → F7, F8
+- **Story:** US-03 -> R2 -> N5 -> F7, F8
 - **File:** `src/pages/staff/CatatTemuan.jsx`
 - **Branch:** `feat/st-02-catat-temuan`
 - **Checklist (AC):**
@@ -70,7 +70,7 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-03 · Penandaan high-value otomatis
 - **Owner:** Arsalla Jumanuar Sintaka · **Reviewer:** Akbar · **Poin:** 1
-- **Story:** US-03 → R9 → C2, C3 → F9
+- **Story:** US-03 -> R9 -> C2, C3 -> F9
 - **File:** `src/data/seed.js` (`HIGH_VALUE_JENIS`), `src/store/StoreContext.jsx` (`isHighValue`), `src/pages/staff/CatatTemuan.jsx`
 - **Branch:** `feat/st-03-penanda-high-value`
 - **Checklist (AC):**
@@ -81,19 +81,19 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-04 · State machine verifikasi & kunci serah terima
 - **Owner:** Sulthan Rizal Halfa Ilmi · **Reviewer:** Afiq · **Poin:** 3
-- **Story:** US-08 → R8 (diperluas) → N7 → F9, C1, P7 + kartu P11
+- **Story:** US-08 -> R8 (diperluas) -> N7 -> F9, C1, P7 + kartu P11
 - **File:** `src/store/StoreContext.jsx` (`saveVerification`, `markHandover`, `confirmMatch`)
 - **Branch:** `feat/st-04-state-verifikasi`
 - **Checklist (AC):**
   - [ ] Status baru "Menunggu Verifikasi Bukti" berlaku khusus barang high-value
   - [ ] AC5.2 — barang tidak dapat ditandai diserahkan bila verifikasi belum diisi atau tidak lolos
-  - [ ] Klaim ditolak → barang kembali berstatus "Disimpan", kecocokan dilepas
+  - [ ] Klaim ditolak -> barang kembali berstatus "Disimpan", kecocokan dilepas
   - [ ] Setiap perubahan tercatat di `riwayat[]` laporan (jejak audit)
 - **Dependency:** ST-03.
 
 ### ST-05 · Form pemeriksaan bukti kepemilikan
 - **Owner:** Muhammad Afiq Aqhdaq · **Reviewer:** Sulthan · **Poin:** 2
-- **Story:** US-08 → R9 → kartu P11
+- **Story:** US-08 -> R9 -> kartu P11
 - **File:** `src/pages/staff/Verifikasi.jsx`
 - **Branch:** `feat/st-05-form-bukti-high-value`
 - **Checklist (AC):**
@@ -105,7 +105,7 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-06 · Daftar barang temuan untuk mahasiswa
 - **Owner:** Ferdilla Ayu Puspita · **Reviewer:** Adzril · **Poin:** 2
-- **Story:** US-06 → R7 → N8 → F5, C4, NFR1
+- **Story:** US-06 -> R7 -> N8 -> F5, C4, NFR1
 - **File:** `src/pages/student/BarangTemuan.jsx`
 - **Branch:** `feat/st-06-daftar-barang-temuan`
 - **Checklist (AC):**
@@ -117,7 +117,7 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-07 · Timeline status laporan
 - **Owner:** M. Akbar Al Ghazali · **Reviewer:** Adzril · **Poin:** 1
-- **Story:** US-02 → R5 → N1 → F3, P1
+- **Story:** US-02 -> R5 -> N1 -> F3, P1
 - **File:** `src/components/ui.jsx` (`StatusTimeline`), `src/pages/student/LaporanSaya.jsx`, `src/pages/student/DetailLaporan.jsx`
 - **Branch:** `feat/st-07-timeline-status`
 - **Checklist (AC):**
@@ -128,11 +128,11 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 
 ### ST-08 · Notifikasi pelapor
 - **Owner:** M. Akbar Al Ghazali · **Reviewer:** Ferdilla · **Poin:** 1
-- **Story:** US-02 → R6 → N1 → F6
+- **Story:** US-02 -> R6 -> N1 -> F6
 - **File:** `src/store/StoreContext.jsx` (pembuatan notifikasi), `src/components/Layout.jsx` (panel lonceng)
 - **Branch:** `feat/st-08-notifikasi-pelapor`
 - **Checklist (AC):**
-  - [ ] AC2.2 — staff menandai kemungkinan cocok → pelapor menerima pemberitahuan pribadi
+  - [ ] AC2.2 — staff menandai kemungkinan cocok -> pelapor menerima pemberitahuan pribadi
   - [ ] AC2.3 — pemberitahuan tidak memuat isi barang atau detail yang ditandai rahasia
   - [ ] Notifikasi high-value mengingatkan untuk membawa bukti kepemilikan
   - [ ] Penanda belum dibaca dan aksi "tandai dibaca" berfungsi
@@ -143,11 +143,11 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 ## 4. Urutan pengerjaan (karena ada dependency)
 
 ```
-Minggu 1   ST-01 (Adzril)  ─┐
-           ST-02 (Arsalla) ─┼─→ ST-03 (Arsalla) ─→ ST-04 (Sulthan)
-           ST-06 (Ferdilla) ┘                            │
-                                                         ▼
-Minggu 2                              ST-05 (Afiq) ·  ST-07, ST-08 (Akbar)
+Minggu 1   ST-01 (Adzril)   --+
+           ST-02 (Arsalla)  --+--> ST-03 (Arsalla) --> ST-04 (Sulthan)
+           ST-06 (Ferdilla) --+                              |
+                                                               v
+Minggu 2                                ST-05 (Afiq) · ST-07, ST-08 (Akbar)
 ```
 
 Yang paling genting: **ST-03 memblokir ST-04 dan ST-05** (total 5 poin). Kalau ST-03
@@ -169,7 +169,7 @@ Sebuah kartu baru boleh dipindah ke **DONE** bila keempatnya terpenuhi:
 Isi wajib deskripsi PR di GitHub (syarat P13):
 
 ```
-Related Sprint Task : ST-__ → US-__ → R__
+Related Sprint Task : ST-__ -> US-__ -> R__
 What Changed        : ...
 Why                 : ...
 How It Was Verified : AC__ dicek dengan langkah ...
@@ -221,13 +221,13 @@ US-07 · Informasi kanal resmi · 2 pts · Not Now sejak P11
 - **Checklist "Acceptance Criteria":** salin dari Bagian 3 dokumen ini
 - **Checklist "Definition of Done":** Reviewed / Merged / AC checked / Build lolos
 - **Description:** tulis rantai traceability, contoh:
-  `F9, C1, C2 → N7 → R8 → US-08 → AC5.1–AC5.3 → ST-04 → PR #__`
+  `F9, C1, C2 -> N7 -> R8 -> US-08 -> AC5.1–AC5.3 -> ST-04 -> PR #__`
 - **Attachment:** link Pull Request GitHub setelah PR dibuat
 
 ### Contoh deskripsi kartu ST-04
 
 ```
-Rantai: F9, C1, C2, P7 + kartu P11 → N7 → R8 (diperluas), R9 → US-08 → ST-04
+Rantai: F9, C1, C2, P7 + kartu P11 -> N7 -> R8 (diperluas), R9 -> US-08 -> ST-04
 
 Mengunci penyerahan barang high-value: status tidak bisa berpindah ke
 "Diserahkan" sebelum hasil verifikasi bukti tercatat valid.
