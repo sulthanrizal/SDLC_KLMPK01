@@ -252,6 +252,9 @@ Mengikuti batasan scope P10 ("Out of Scope") dan sifat tugas ini:
 
 ## 11. Catatan untuk kontributor berikutnya
 
+Pembagian tugas per anggota, sprint task (ST-01…ST-08), reviewer, dan format kartu Trello
+ada di **[TASKS.md](TASKS.md)**.
+
 - Kalau menambah jenis barang baru yang bernilai tinggi, tambahkan ke
   `HIGH_VALUE_JENIS` di `src/data/seed.js` — penandaan otomatis dan alur verifikasi
   tambahan akan ikut berlaku tanpa perubahan lain.

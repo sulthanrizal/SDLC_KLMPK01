@@ -73,14 +73,14 @@ terbuka — ada di **[CONTEXT.md](CONTEXT.md)**.
 
 ## Anggota kelompok
 
-<!-- TODO: lengkapi menjadi 7 anggota sesuai Project Evidence Index, dan samakan
-     dengan daftar di dokumen P9 yang saat ini masih berbeda. -->
+| No | Nama | Area kepemilikan |
+|---|---|---|
+| 1 | Adzril Adzim Hendrynov | Lapor kehilangan (US-01) |
+| 2 | Arsalla Jumanuar Sintaka | Catat barang temuan & penandaan high-value (US-03) |
+| 3 | Ferdilla Ayu Puspita | Daftar barang temuan mahasiswa (US-06) |
+| 4 | M. Akbar Al Ghazali | Status laporan & notifikasi (US-02) |
+| 5 | Muhammad Afiq Aqhdaq | Form pemeriksaan bukti high-value (US-08) |
+| 6 | Sulthan Rizal Halfa Ilmi | State machine verifikasi & kunci serah terima (US-08) |
 
-| No | Nama |
-|---|---|
-| 1 | Adzril Adzim Hendrynov |
-| 2 | Arsalla Jumanuar Sintaka |
-| 3 | Ferdilla Ayu Puspita |
-| 4 | M. Akbar Al Ghazali |
-| 5 | Muhammad Afiq Aqhdaq |
-| 6 | Sulthan Rizal Halfa Ilmi |
+Pembagian tugas lengkap beserta sprint task, reviewer, dan format kartu Trello ada di
+**[TASKS.md](TASKS.md)**.
