@@ -35,6 +35,7 @@ export default function CatatTemuan() {
   const set = (k) => (e) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
     setErrors((x) => ({ ...x, [k]: undefined }));
+    if (savedRecord) setSavedRecord(null);
   };
 
   const hv = isHighValue(form.jenis); // AC3.3 — penandaan otomatis
@@ -87,6 +88,7 @@ export default function CatatTemuan() {
 
     const created = s.addItem(form);
     setSavedRecord(created);
+    setForm(KOSONG); // Reset form agar siap untuk input baru & cegah double submit
     setHasSubmitted(false);
 
     s.pushToast({
