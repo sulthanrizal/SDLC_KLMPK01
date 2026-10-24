@@ -85,10 +85,10 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 - **File:** `src/store/StoreContext.jsx` (`saveVerification`, `markHandover`, `confirmMatch`)
 - **Branch:** `feat/st-04-state-verifikasi`
 - **Checklist (AC):**
-  - [ ] Status baru "Menunggu Verifikasi Bukti" berlaku khusus barang high-value
-  - [ ] AC5.2 — barang tidak dapat ditandai diserahkan bila verifikasi belum diisi atau tidak lolos
-  - [ ] Klaim ditolak -> barang kembali berstatus "Disimpan", kecocokan dilepas
-  - [ ] Setiap perubahan tercatat di `riwayat[]` laporan (jejak audit)
+  - [x] Status baru "Menunggu Verifikasi Bukti" berlaku khusus barang high-value
+  - [x] AC5.2 — barang tidak dapat ditandai diserahkan bila verifikasi belum diisi atau tidak lolos
+  - [x] Klaim ditolak -> barang kembali berstatus "Disimpan", kecocokan dilepas
+  - [x] Setiap perubahan tercatat di `riwayat[]` laporan (jejak audit)
 - **Dependency:** ST-03.
 
 ### ST-05 · Form pemeriksaan bukti kepemilikan
