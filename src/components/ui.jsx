@@ -2,7 +2,7 @@
    ui.jsx — komponen presentasional yang dipakai berulang
    ============================================================ */
 
-import { useEffect } from 'react';
+import { useEffect, useId, cloneElement, isValidElement } from 'react';
 import Icon from './Icon.jsx';
 import { STATUS, ITEM_STATUS, STATUS_FLOW } from '../data/seed.js';
 
@@ -129,6 +129,23 @@ export function Callout({ tone = '', icon = 'info', title, children }) {
 /* ---------- Field ---------- */
 
 export function Field({ label, required, help, error, children, htmlFor }) {
+  /* Aksesibilitas (ST-01): hubungkan teks bantuan & pesan error ke input
+     lewat aria-describedby, tandai input invalid, dan umumkan error ke
+     screen reader dengan role="alert". Atribut disuntikkan ke child tunggal
+     (input/select/textarea) sehingga pemakaian Field di halaman lain tetap
+     otomatis ikut membaik tanpa perubahan apa pun. */
+  const uid = useId();
+  const helpId = help && !error ? `${uid}-help` : undefined;
+  const errId = error ? `${uid}-err` : undefined;
+  const describedBy = [helpId, errId].filter(Boolean).join(' ') || undefined;
+
+  const control = isValidElement(children)
+    ? cloneElement(children, {
+        'aria-invalid': error ? 'true' : undefined,
+        'aria-describedby': describedBy
+      })
+    : children;
+
   return (
     <div className={`field${error ? ' invalid' : ''}`}>
       {label && (
@@ -136,9 +153,9 @@ export function Field({ label, required, help, error, children, htmlFor }) {
           {label} {required && <span className="req" title="Wajib diisi">*</span>}
         </label>
       )}
-      {children}
-      {help && !error && <span className="help">{help}</span>}
-      {error && <span className="error">{error}</span>}
+      {control}
+      {help && !error && <span className="help" id={helpId}>{help}</span>}
+      {error && <span className="error" id={errId} role="alert">{error}</span>}
     </div>
   );
 }
