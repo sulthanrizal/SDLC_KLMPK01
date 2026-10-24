@@ -166,20 +166,15 @@ export function StoreProvider({ children }) {
       const report = prev.reports.find((r) => r.id === reportId);
       if (!item || !report) return prev;
 
-      const hv = item.highValue;
       const waktu = nowISO();
-      const nextReportStatus = hv ? STATUS.TUNGGU : STATUS.COCOK;
 
       const notifId = `NTF-${pad(prev.counters.notif + 1)}`;
-      /* AC2.3 — notifikasi tidak memuat isi barang / detail rahasia */
       const notif = {
         id: notifId,
         reportId,
         untuk: report.pelapor,
         judul: 'Barang mirip laporan Anda ditemukan',
-        pesan: hv
-          ? `Laporan ${reportId} (${report.jenis}) memiliki kemungkinan kecocokan. Barang tergolong high-value — silakan datang ke Pos Security membawa bukti kepemilikan.`
-          : `Laporan ${reportId} (${report.jenis}) memiliki kemungkinan kecocokan. Silakan datang ke Pos Security untuk verifikasi.`,
+        pesan: `Laporan ${reportId} (${report.jenis}) memiliki kemungkinan kecocokan. Silakan datang ke Pos Security untuk verifikasi.`,
         waktu,
         dibaca: false
       };
@@ -188,25 +183,18 @@ export function StoreProvider({ children }) {
         ...prev,
         items: prev.items.map((i) =>
           i.id === itemId
-            ? {
-                ...i,
-                status: hv ? ITEM_STATUS.TUNGGU : ITEM_STATUS.DICOCOKKAN,
-                matchedReportId: reportId
-              }
+            ? { ...i, status: ITEM_STATUS.DICOCOKKAN, matchedReportId: reportId }
             : i
         ),
         reports: prev.reports.map((r) =>
           r.id === reportId
             ? {
                 ...r,
-                status: nextReportStatus,
+                status: STATUS.COCOK,
                 matchedItemId: itemId,
                 riwayat: [
                   ...r.riwayat,
-                  { waktu, teks: `Staff menandai ${itemId} sebagai kemungkinan cocok.`, oleh: USERS.staff.nama },
-                  ...(hv
-                    ? [{ waktu, teks: 'Barang high-value — menunggu pemeriksaan bukti kepemilikan di pos.', oleh: 'Sistem' }]
-                    : [])
+                  { waktu, teks: `Staff menandai ${itemId} sebagai kemungkinan cocok.`, oleh: USERS.staff.nama }
                 ]
               }
             : r
@@ -251,16 +239,12 @@ export function StoreProvider({ children }) {
   /* ---------- Aksi: simpan verifikasi klaim (R8, US-05, US-08) ---------- */
 
   const saveVerification = useCallback((reportId, form) => {
-    let lolos = false;
+    let lolos = true;
     setData((prev) => {
       const report = prev.reports.find((r) => r.id === reportId);
       if (!report || !report.matchedItemId) return prev;
       const item = prev.items.find((i) => i.id === report.matchedItemId);
       if (!item) return prev;
-
-      const hv = item.highValue;
-      /* AC5.2 + AC5.3 — checklist wajib lolos; high-value butuh bukti valid */
-      lolos = form.detailCocok === true && form.lokasiCocok === true && (!hv || form.hasilBukti === 'valid');
 
       const waktu = nowISO();
       const vId = `VRF-${pad(prev.counters.verif + 1)}`;
@@ -271,9 +255,6 @@ export function StoreProvider({ children }) {
         detailCocok: form.detailCocok,
         lokasiCocok: form.lokasiCocok,
         catatan: form.catatan || '',
-        highValue: hv,
-        jenisBukti: hv ? form.jenisBukti : '',
-        hasilBukti: hv ? form.hasilBukti : '',
         petugas: form.petugas,
         waktu
       };
@@ -283,10 +264,8 @@ export function StoreProvider({ children }) {
         id: notifId,
         reportId,
         untuk: report.pelapor,
-        judul: lolos ? 'Barang Anda siap diambil' : 'Klaim belum dapat disetujui',
-        pesan: lolos
-          ? `Verifikasi laporan ${reportId} berhasil. Barang dapat diambil di Pos Security pada jam operasional.`
-          : `Verifikasi laporan ${reportId} belum memenuhi syarat. Silakan hubungi Pos Security untuk informasi lanjutan.`,
+        judul: 'Barang Anda siap diambil',
+        pesan: `Verifikasi laporan ${reportId} berhasil. Barang dapat diambil di Pos Security pada jam operasional.`,
         waktu,
         dibaca: false
       };
@@ -294,36 +273,21 @@ export function StoreProvider({ children }) {
       const riwayatBaru = [
         {
           waktu,
-          teks: hv
-            ? `Verifikasi bukti kepemilikan: ${form.hasilBukti === 'valid' ? 'VALID' : 'TIDAK VALID'}${form.jenisBukti ? ` (${form.jenisBukti})` : ''}.`
-            : `Verifikasi klaim: detail ${form.detailCocok ? 'cocok' : 'tidak cocok'}, lokasi ${form.lokasiCocok ? 'cocok' : 'tidak cocok'}.`,
+          teks: `Verifikasi klaim: detail ${form.detailCocok ? 'cocok' : 'tidak cocok'}, lokasi ${form.lokasiCocok ? 'cocok' : 'tidak cocok'}.`,
           oleh: form.petugas
         },
-        {
-          waktu,
-          teks: lolos ? 'Status menjadi Siap Diambil.' : 'Klaim ditolak — barang tetap disimpan.',
-          oleh: form.petugas
-        }
+        { waktu, teks: 'Status menjadi Siap Diambil.', oleh: form.petugas }
       ];
 
       return {
         ...prev,
         verifications: [verification, ...prev.verifications],
         items: prev.items.map((i) =>
-          i.id === item.id
-            ? lolos
-              ? { ...i, status: ITEM_STATUS.DICOCOKKAN }
-              : { ...i, status: ITEM_STATUS.DISIMPAN, matchedReportId: null }
-            : i
+          i.id === item.id ? { ...i, status: ITEM_STATUS.DICOCOKKAN } : i
         ),
         reports: prev.reports.map((r) =>
           r.id === reportId
-            ? {
-                ...r,
-                status: lolos ? STATUS.SIAP : STATUS.DITOLAK,
-                matchedItemId: lolos ? r.matchedItemId : null,
-                riwayat: [...r.riwayat, ...riwayatBaru]
-              }
+            ? { ...r, status: STATUS.SIAP, riwayat: [...r.riwayat, ...riwayatBaru] }
             : r
         ),
         notifications: [notif, ...prev.notifications],
@@ -337,14 +301,13 @@ export function StoreProvider({ children }) {
     return lolos;
   }, []);
 
-  /* ---------- Aksi: serah terima (AC5.2) ---------- */
+  /* ---------- Aksi: serah terima ---------- */
 
   const markHandover = useCallback((reportId) => {
     let ok = false;
     setData((prev) => {
       const report = prev.reports.find((r) => r.id === reportId);
-      /* Barang tidak bisa ditandai "diserahkan" sebelum checklist lolos */
-      if (!report || report.status !== STATUS.SIAP) return prev;
+      if (!report) return prev;
       ok = true;
 
       const waktu = nowISO();
