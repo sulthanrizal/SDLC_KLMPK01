@@ -43,7 +43,16 @@ export default function LaporKehilangan() {
       err.ciri = 'Isi minimal satu ciri barang: warna, merek, atau ciri khusus.';
     }
 
-    if (!form.tanggalHilang) err.tanggalHilang = 'Perkiraan tanggal kehilangan wajib diisi.';
+    if (!form.tanggalHilang) {
+        err.tanggalHilang = 'Perkiraan tanggal kehilangan wajib diisi.';
+      } else {
+        const selectedDate = new Date(form.tanggalHilang);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        if (selectedDate > today) {
+          err.tanggalHilang = 'Tanggal kehilangan tidak boleh melebihi hari ini.';
+        }
+      }
 
     /* AC1.2 — rentang waktu & area boleh perkiraan, jadi TIDAK divalidasi ketat.
        Yang dicek hanya konsistensi bila dua-duanya diisi. */

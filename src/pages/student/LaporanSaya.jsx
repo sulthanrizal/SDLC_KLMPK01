@@ -5,7 +5,7 @@
 
 import { Link } from 'react-router-dom';
 import Icon from '../../components/Icon.jsx';
-import { Card, PageHead, StatusBadge, EmptyState, fmtDate, fmtRentang } from '../../components/ui.jsx';
+import { Card, PageHead, StatusBadge, MiniProgress, EmptyState, fmtDate, fmtRentang } from '../../components/ui.jsx';
 import { useStore } from '../../store/StoreContext.jsx';
 
 export default function LaporanSaya() {
@@ -56,7 +56,10 @@ export default function LaporanSaya() {
                         {fmtDate(r.tanggalHilang)} · {fmtRentang(r.waktuDari, r.waktuSampai)}
                       </div>
                     </td>
-                    <td><StatusBadge status={r.status} /></td>
+                    <td>
+                      <StatusBadge status={r.status} />
+                      <MiniProgress report={r} highValue={!!(s.items.find(i => i.id === r.matchedItemId)?.highValue)} />
+                    </td>
                     <td className="actions">
                       <Link className="btn btn-sm" to={`/laporan-saya/${r.id}`}>Detail</Link>
                     </td>
