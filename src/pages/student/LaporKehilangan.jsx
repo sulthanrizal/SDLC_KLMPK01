@@ -3,11 +3,15 @@
    Memenuhi: R1 · US1 · AC1.1 · AC1.2 · AC1.3 · C5
    ============================================================ */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, PageHead, Field, Callout } from '../../components/ui.jsx';
+import Icon from '../../components/Icon.jsx';
 import { useStore } from '../../store/StoreContext.jsx';
 import { AREAS, JENIS_BARANG, WARNA, HIGH_VALUE_JENIS } from '../../data/seed.js';
+
+const CIRI_MAX = 300;
+const DRAFT_KEY = 'draft-lapor-kehilangan';
 
 const KOSONG = {
   jenis: '',
@@ -21,11 +25,75 @@ const KOSONG = {
   kontak: ''
 };
 
+/* Dipakai ringkasan error: kunci error di validate() -> id field & label */
+const ERROR_TARGET = {
+  jenis: { id: 'jenis', label: 'Jenis barang' },
+  ciri: { id: 'ciri', label: 'Ciri khusus' },
+  tanggalHilang: { id: 'tgl', label: 'Perkiraan tanggal' },
+  waktuSampai: { id: 'j2', label: 'Jam selesai' },
+  kontak: { id: 'kontak', label: 'Nomor yang bisa dihubungi' }
+};
+
+const hariIniISO = () => {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+};
+
+/* Nomor HP Indonesia: diawali +62/62/08, spasi dan tanda hubung diabaikan */
+const kontakValid = (v) => {
+  const norm = v.replace(/[\s-]/g, '');
+  return /^(\+62|62|0)8[1-9][0-9]{5,11}$/.test(norm);
+};
+
 export default function LaporKehilangan() {
   const s = useStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState(KOSONG);
+
+  /* Draft anti-hilang: isian dipulihkan dari localStorage bila ada
+     (mis. tab tertutup atau refresh di tengah mengisi). */
+  const [form, setForm] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) return { ...KOSONG, ...JSON.parse(raw) };
+    } catch {
+      /* draft rusak -> abaikan, mulai dari kosong */
+    }
+    return KOSONG;
+  });
+  const [draftDipulihkan, setDraftDipulihkan] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      return raw ? Object.values(JSON.parse(raw)).some((v) => v !== '') : false;
+    } catch {
+      return false;
+    }
+  });
   const [errors, setErrors] = useState({});
+  const summaryRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      /* Form kosong = tidak ada yang perlu disimpan; hapus key supaya
+         tidak menumpuk draft kosong di localStorage. */
+      const kosongSemua = Object.values(form).every((v) => v === '');
+      if (kosongSemua) {
+        localStorage.removeItem(DRAFT_KEY);
+      } else {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+      }
+    } catch {
+      /* localStorage penuh/tidak tersedia -> draft nonaktif, form tetap jalan */
+    }
+  }, [form]);
+
+  /* AC1.3 (diperkuat): saat submit gagal, fokus pindah ke ringkasan error
+     supaya pengguna keyboard/screen reader langsung tahu apa yang kurang. */
+  useEffect(() => {
+    if (Object.keys(errors).length > 0 && summaryRef.current) {
+      summaryRef.current.focus();
+    }
+  }, [errors]);
 
   const set = (k) => (e) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -44,15 +112,11 @@ export default function LaporKehilangan() {
     }
 
     if (!form.tanggalHilang) {
-        err.tanggalHilang = 'Perkiraan tanggal kehilangan wajib diisi.';
-      } else {
-        const selectedDate = new Date(form.tanggalHilang);
-        const today = new Date();
-        today.setHours(23, 59, 59, 999);
-        if (selectedDate > today) {
-          err.tanggalHilang = 'Tanggal kehilangan tidak boleh melebihi hari ini.';
-        }
-      }
+      err.tanggalHilang = 'Perkiraan tanggal kehilangan wajib diisi.';
+    } else if (form.tanggalHilang > hariIniISO()) {
+      /* Kasus tepi: tanggal kehilangan mustahil di masa depan */
+      err.tanggalHilang = 'Tanggal kehilangan tidak boleh tanggal yang akan datang.';
+    }
 
     /* AC1.2 — rentang waktu & area boleh perkiraan, jadi TIDAK divalidasi ketat.
        Yang dicek hanya konsistensi bila dua-duanya diisi. */
@@ -60,7 +124,23 @@ export default function LaporKehilangan() {
       err.waktuSampai = 'Jam selesai harus setelah jam mulai.';
     }
 
+    /* Kasus tepi: nomor kontak opsional, tapi bila diisi harus berformat nomor HP */
+    if (form.kontak.trim() && !kontakValid(form.kontak.trim())) {
+      err.kontak = 'Format nomor tidak dikenali. Gunakan nomor HP, mis. 0812-3456-7890.';
+    }
+
     return err;
+  }
+
+  function kosongkan() {
+    setForm(KOSONG);
+    setErrors({});
+    setDraftDipulihkan(false);
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* abaikan */
+    }
   }
 
   function onSubmit(e) {
@@ -78,6 +158,11 @@ export default function LaporKehilangan() {
     }
 
     const created = s.addReport(form);
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* abaikan */
+    }
     s.pushToast({
       tone: 'ok',
       title: `Laporan ${created.id} tersimpan`,
@@ -87,6 +172,7 @@ export default function LaporKehilangan() {
   }
 
   const isHV = HIGH_VALUE_JENIS.includes(form.jenis);
+  const daftarError = Object.entries(errors).filter(([, msg]) => msg);
 
   return (
     <>
@@ -98,6 +184,37 @@ export default function LaporKehilangan() {
 
       <form onSubmit={onSubmit} noValidate>
         <div className="stack">
+          {draftDipulihkan && (
+            <Callout tone="info" icon="refresh" title="Isian sebelumnya dipulihkan.">
+              Formulir ini menyimpan isian Anda secara otomatis. Bila ingin mulai dari
+              awal, tekan "Kosongkan form" di bawah.
+            </Callout>
+          )}
+
+          {daftarError.length > 0 && (
+            <div
+              className="callout callout-danger"
+              role="alert"
+              tabIndex={-1}
+              ref={summaryRef}
+            >
+              <Icon name="alert" size={17} />
+              <div>
+                <strong>Laporan belum bisa dikirim.</strong>{' '}
+                Periksa isian berikut:
+                <ul className="err-list">
+                  {daftarError.map(([k, msg]) => (
+                    <li key={k}>
+                      <a href={`#${ERROR_TARGET[k]?.id ?? k}`}>
+                        {ERROR_TARGET[k]?.label ?? k}: {msg}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           <Callout tone="info" title="Tidak ingat lokasi atau jam persisnya?">
             Tidak masalah. Cukup pilih area umum (misalnya "Kantin") dan rentang jam
             (misalnya 10.00–12.00). Laporan tetap tersimpan. <span className="mono">(C5 · AC1.2)</span>
@@ -139,12 +256,13 @@ export default function LaporKehilangan() {
                 label="Ciri khusus"
                 htmlFor="ciri"
                 error={errors.ciri}
-                help="Detail yang hanya diketahui pemilik akan membantu verifikasi nanti."
+                help={`${CIRI_MAX - form.ciriKhusus.length} karakter tersisa. Detail yang hanya diketahui pemilik akan membantu verifikasi nanti.`}
               >
                 <textarea
                   id="ciri"
                   value={form.ciriKhusus}
                   onChange={set('ciriKhusus')}
+                  maxLength={CIRI_MAX}
                   placeholder="mis. ada stiker band di badan tumbler, sudut dompet lecet, gantungan boneka cokelat"
                 />
               </Field>
@@ -190,6 +308,7 @@ export default function LaporKehilangan() {
             <Field
               label="Nomor yang bisa dihubungi"
               htmlFor="kontak"
+              error={errors.kontak}
               help="Dipakai petugas bila ada barang yang cocok. Tidak ditampilkan ke mahasiswa lain."
             >
               <input
@@ -207,10 +326,7 @@ export default function LaporKehilangan() {
             <button
               type="button"
               className="btn"
-              onClick={() => {
-                setForm(KOSONG);
-                setErrors({});
-              }}
+              onClick={kosongkan}
             >
               Kosongkan form
             </button>

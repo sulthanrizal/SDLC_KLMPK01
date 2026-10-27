@@ -52,9 +52,10 @@ Setiap anggota me-review minimal satu PR anggota lain, sesuai syarat P13
 - **File:** `src/pages/student/LaporKehilangan.jsx`
 - **Branch:** `feat/st-01-lapor-kehilangan`
 - **Checklist (AC):**
-  - [ ] AC1.1 — jenis + minimal satu ciri -> tersimpan dengan ID dan status "Dilaporkan"
-  - [ ] AC1.2 — rentang jam & area umum diterima, waktu/lokasi persis tidak pernah diminta
-  - [ ] AC1.3 — tanpa jenis barang, laporan ditolak dan field wajib ditandai
+  - [x] AC1.1 — jenis + minimal satu ciri -> tersimpan dengan ID dan status "Dilaporkan"
+  - [x] AC1.2 — rentang jam & area umum diterima, waktu/lokasi persis tidak pernah diminta
+  - [x] AC1.3 — tanpa jenis barang, laporan ditolak dan field wajib ditandai
+- **Catatan uji:** `docs/st-01-catatan-uji.md`
 - **Dependency:** tidak ada. Jadi sumber data untuk ST-07 dan ST-08.
 
 ### ST-02 · Form catat barang temuan
